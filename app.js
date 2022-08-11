@@ -1,6 +1,7 @@
 require('dotenv').config;
 const express = require('express');
-const { validatePostActivity, validateParam, validateDeleteActivity, validateUpdate, validateUpdateTodo, makeTodo } = require('./validation');
+const allRoutes = require('./routes')
+const { pool } = require('./connection');
 
 const app = express();
 const PORT = 3030;
@@ -12,6 +13,8 @@ app.get('/', (req, res) => {
     message: "Hello There!"
   })
 })
+
+app.use('/', allRoutes)
 
 process.on('unhandledRejection', (err) => {
     console.log(err);

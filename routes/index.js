@@ -18,3 +18,5 @@ router.get('/todo-items', todo.listTodos);
 router.post('/todo-items:id', validateParam, todo.getTodoById);
 router.patch('/todo-items/:id', validateUpdateTodo, todo.updateTodo);
 router.delete('/todo-items/:id', validateDeleteActivity, todo.deleteTodo);
+
+module.exports = router
