@@ -1,14 +1,9 @@
 # syntax=docker/dockerfile:1
 
-FROM node:16.15.1
+FROM node:16
 ENV NODE_ENV=production
-
-WORKDIR /
-
+WORKDIR /app
 COPY ["package.json", "package-lock.json*", "./"]
-
 RUN npm install --production
-
 COPY . .
-
 CMD [ "node", "app.js" ]
