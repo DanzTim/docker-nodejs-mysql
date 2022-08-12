@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:16
+FROM node:16-alpine
 LABEL maintainer="Dandi Temmu <dandi.temmu@hotmail.com>"
 ENV NODE_ENV=production
 WORKDIR /app
