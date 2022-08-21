@@ -9,9 +9,13 @@ class TodoController {
             await pool.query(query, [title, activity_group_id, priority])
             let [insert, ...rest] = await pool.query(`SELECT LAST_INSERT_ID() as lastId;`)
             let [data, ...rest2] = await pool.query(`SELECT * FROM todo WHERE id = ?`, [insert[0].lastId])
-            res.status(201).json({
-                ...data[0]
-            })
+            res.status(201).json(
+                {
+                    "status": "Success",
+                    "message": "Success",
+                    "data": data[0]
+                }
+            )
         } catch (error) {
             res.status(500).json(
                 {
@@ -28,23 +32,17 @@ class TodoController {
     
     // app.get('/todo-items', async (req, res) {
     async listTodos (req, res) {
-        let total, limit, data;
-        let todoQuery = 'SELECT * FROM todo';
         try {
-            let [test, ...rest] = await pool.query(todoQuery)
-            let todos = test.map(t => {
-                let { created_at, updated_at, ...rest} = t
-                return rest
-            })
-            data = todos
-            total = test.length
-            limit = 10
+            let todoQuery = 'SELECT * FROM todo';
+            if(req.query.activity_group_id){
+                todoQuery = 'SELECT * FROM todo WHERE activity_group_id = ?'
+            }
+            let [test, ...rest] = await pool.query(todoQuery, [req.query.activity_group_id])
     
             res.json({
-                total, 
-                limit,
-                "skip": 0,
-                data
+                "status": "Success",
+                "message": "Success",
+                "data": test
             })
         } catch (error) {
             console.error(error);
@@ -59,18 +57,19 @@ class TodoController {
             if(!test.length){
                 return res.status(404).json(
                     {
-                        "name": "NotFound",
-                        "message": `No record found for id ${req.params.id}`,
-                        "code": 404,
-                        "className": "not-found",
-                        "errors": {}
+                        "status": "Not Found",
+                        "message": `Todo with ID ${req.params.id} Not Found`,
+                        "data": {}
                     }
                 )
             }
-            let { activity_group_id, created_at, updated_at, ...rest2 } = test[0]
-            res.json({
-                ...rest2
-            })
+            res.json(
+                {
+                    "status": "Success",
+                    "message": "Success",
+                    "data": test
+                }
+            )
         } catch (error) {
             console.error(error);
         }
@@ -79,25 +78,31 @@ class TodoController {
     // app.patch('/todo-items/:id', validateUpdateTodo, async (req, res) {
     async updateTodo (req, res) {
         let { id } = req.params
-        let { title, is_active, priority } = req.body
+        let { title, is_active } = req.body
         try {
-            let query = `UPDATE todo SET title = ?, is_active = ?, priority = ? WHERE id = ?`
-            await pool.query(query, [title,is_active, priority, id])
+            let query = `UPDATE todo SET title = ? WHERE id = ?`
+            if(title && !is_active){
+                await pool.query(query, [title, id])
+            }
+            if(!title && is_active){
+                let query = `UPDATE todo SET is_active = ? WHERE id = ?`
+                await pool.query(query, [is_active, id])
+            }
             let getQuery = 'SELECT * FROM todo WHERE id = ?'
             let data = await pool.query(getQuery, [id])
             if(!data[0].length){
                 return res.status(404).json(
                     {
-                        "name": "NotFound",
-                        "message": `No record found for id ${req.params.id}`,
-                        "code": 404,
-                        "className": "not-found",
-                        "errors": {}
+                        "status": "NotFound",
+                        "message": `Todo with ID ${req.params.id} Not Found`,
+                        "data": {}
                     }
                 )
             }
             res.json({
-                ...data[0][0]
+                "status": "Success",
+                "message": "Success",
+                "data": data[0][0]
             })
         } catch (error) {
             res.status(500).json(
@@ -116,21 +121,27 @@ class TodoController {
     // app.delete('/todo-items/:id', validateDeleteActivity, async (req, res) {
     async deleteTodo (req, res) {
         try {
-            if(req.query.id){
-                let numbers = req.query.id.split(',').map(Number)
-                let query = 'DELETE FROM todo WHERE id IN (?)';
-                await pool.query(query, [numbers])
-                let obj = [];
-                for (let i = 0; i < numbers.length; i++) {
-                    obj.push({})
+            let getQuery = 'SELECT * FROM todo WHERE id = ?'
+            let data = await pool.query(getQuery, [req.params.id])
+            if(!data[0].length){
+                return res.status(404).json(
+                    {
+                        "status": "NotFound",
+                        "message": `Todo with ID ${req.params.id} Not Found`,
+                        "data": {}
+                    }
+                )
+            }
+            let queryPath = 'DELETE FROM todo WHERE id = ?';
+            await pool.query(queryPath, [req.params.id])
+    
+            res.status(200).json(
+                {
+                    "status": "Success",
+                    "message": "Success",
+                    "data": {}
                 }
-                return res.status(200).json(obj)
-            }
-            if(req.params.id){
-                let queryPath = 'DELETE FROM todo WHERE id = ?';
-                await pool.query(queryPath, [req.params.id])
-            }
-            res.status(200).json([{}])
+            )
         } catch (error) {
             console.error(error);
         }

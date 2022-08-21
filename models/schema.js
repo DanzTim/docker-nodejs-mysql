@@ -32,7 +32,7 @@ const activitySchema = {
     }),
     updateTodo: Joi.object({
         title: Joi.string(),
-        is_active: Joi.number().valid(1, 2),
+        is_active: Joi.bool(),
         priority: Joi.string().valid("very-high", "high", "normal", "low", "very-low"),
         _comment: Joi.string()
     })

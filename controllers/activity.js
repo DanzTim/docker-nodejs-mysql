@@ -10,11 +10,9 @@ class ActivityController {
             if(!test.length){
                 return res.status(404).json(
                     {
-                        "name": "NotFound",
-                        "message": `No record found for id ${req.params.id}`,
-                        "code": 404,
-                        "className": "not-found",
-                        "errors": {}
+                        "status": "Not Found",
+                        "message": `Activity with ID ${req.params.id} Not Found`,
+                        "data": {}
                     }
                 )
             }
@@ -59,11 +57,15 @@ class ActivityController {
             let [insert, ...rest] = await pool.query(`SELECT LAST_INSERT_ID() as lastId;`)
             let [data, ...rest2] = await pool.query(`SELECT * FROM activity WHERE id = ?`, [insert[0].lastId])
             res.status(201).json({
-                "created_at": data[0].created_at,
-                "updated_at": data[0].updated_at,
-                "id": insert[0].lastId,
-                "title": data[0].title,
-                "email": data[0].email
+                "status": "Success",
+                "message": "Success",
+                "data": {
+                    "created_at": data[0].created_at,
+                    "updated_at": data[0].updated_at,
+                    "id": insert[0].lastId,
+                    "title": data[0].title,
+                    "email": data[0].email
+                }
             })
         } catch (error) {
             console.error(error);
@@ -73,21 +75,23 @@ class ActivityController {
     // app.delete('/activity-groups/:id', validateDeleteActivity, async (req, res) {
     async deleteActivity (req, res) {
         try {
-            if(req.query.id){
-                let numbers = req.query.id.split(',').map(Number)
-                let query = 'DELETE FROM activity WHERE id IN (?)';
-                await pool.query(query, [numbers])
-                let obj = [];
-                for (let i = 0; i < numbers.length; i++) {
-                    obj.push({})
-                }
-                return res.status(200).json(obj)
+            let checkPath = 'SELECT * FROM activity WHERE id = ?';
+            let check = await pool.query(checkPath, [req.params.id])
+            if(check[0].length == 0){
+                return res.status(404).json({
+                    "status": "Not Found",
+                    "message": "Activity with ID 1381738 Not Found",
+                    "data": {}
+                })
             }
-            if(req.params.id){
-                let queryPath = 'DELETE FROM activity WHERE id = ?';
-                await pool.query(queryPath, [req.params.id])
-            }
-            res.status(200).json([{}])
+            let queryPath = 'DELETE FROM activity WHERE id = ?';
+            await pool.query(queryPath, [req.params.id])
+
+            res.status(200).json({
+                "status": "Success",
+                "message": "Success",
+                "data": {}
+            })
         } catch (error) {
             console.error(error);
         }
@@ -105,11 +109,9 @@ class ActivityController {
             if(!data[0].length){
                 return res.status(404).json(
                     {
-                        "name": "NotFound",
-                        "message": `No record found for id ${req.params.id}`,
-                        "code": 404,
-                        "className": "not-found",
-                        "errors": {}
+                        "status": "Not Found",
+                        "message": `Activity with ID ${id} Not Found`,
+                        "data": {}
                     }
                 )
             }

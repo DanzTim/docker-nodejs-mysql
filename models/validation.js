@@ -7,7 +7,7 @@ module.exports = {
             next()
         } catch (error) {
             return res.status(400).json({
-                "status": "Error",
+                "status": "Bad Request",
                 "message": error.details[0].message,
                 "data": {}
             })
@@ -19,7 +19,7 @@ module.exports = {
             next()
         } catch (error) {
             return res.status(400).json({
-                "status": "Error",
+                "status": "Bad Request",
                 "message": error.details[0].message,
                 "data": {}
             })
@@ -31,7 +31,7 @@ module.exports = {
             next()
         } catch (error) {
             return res.status(400).json({
-                "status": "Error",
+                "status": "Bad Request",
                 "message": error.details[0].message,
                 "data": {}
             })
@@ -44,7 +44,7 @@ module.exports = {
             next()
         } catch (error) {
             return res.status(400).json({
-                "status": "Error",
+                "status": "Bad Request",
                 "message": error.details[0].message,
                 "data": {}
             })
@@ -57,7 +57,7 @@ module.exports = {
             next()
         } catch (error) {
             return res.status(400).json({
-                "status": "Error",
+                "status": "Bad Request",
                 "message": error.details[0].message,
                 "data": {}
             })
@@ -70,7 +70,7 @@ module.exports = {
             next()
         } catch (error) {
             return res.status(400).json({
-                "status": "Error",
+                "status": "Bad Request",
                 "message": error.details[0].message,
                 "data": {}
             })
@@ -82,7 +82,7 @@ module.exports = {
             next()
         } catch (error) {
             return res.status(400).json({
-                "status": "Error",
+                "status": "Bad Request",
                 "message": error.details[0].message,
                 "data": {}
             })
