@@ -66,7 +66,8 @@ module.exports = {
     validateUpdateTodo: async (req, res, next) => {
         try {
             await activitySchema.requiredParamId.validateAsync(req.params);
-            await activitySchema.updateTodo.validateAsync(req.body)
+            let tester = await activitySchema.updateTodo.validateAsync(req.body)
+            req.body = tester
             next()
         } catch (error) {
             return res.status(400).json({
@@ -78,7 +79,8 @@ module.exports = {
     },
     makeTodo: async (req, res, next) => {
         try {
-            await activitySchema.todo.validateAsync(req.body);
+            let tester = await activitySchema.todo.validateAsync(req.body);
+            req.body = tester
             next()
         } catch (error) {
             return res.status(400).json({

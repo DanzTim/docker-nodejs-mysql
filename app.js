@@ -23,8 +23,6 @@ process.on('unhandledRejection', (err) => {
 
 app.listen(PORT, '0.0.0.0', async () => {
     await pool.getConnection();
-    // await pool.query(`CREATE DATABASE IF NOT EXISTS dandi_temmu`)
-    // await pool.query(`USE dandi_temmu`)
     await pool.query(`CREATE TABLE IF NOT EXISTS \`activities\` (
       \`id\` int NOT NULL AUTO_INCREMENT,
       \`email\` varchar(100) DEFAULT NULL,

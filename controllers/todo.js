@@ -9,6 +9,8 @@ class TodoController {
             await pool.query(query, [title, activity_group_id, priority])
             let [insert, ...rest] = await pool.query(`SELECT LAST_INSERT_ID() as lastId;`)
             let [data, ...rest2] = await pool.query(`SELECT * FROM todos WHERE id = ?`, [insert[0].lastId])
+
+            data[0].is_active = data[0].is_active == 1 ? true : false;
             res.status(201).json(
                 {
                     "status": "Success",
@@ -52,7 +54,7 @@ class TodoController {
     // app.get('/todo-items/:id', validateParam, async (req, res) {
     async getTodoById (req, res) {
         try {
-            let todoQuery = 'SELECT * FROM todoss WHERE id = ?';
+            let todoQuery = 'SELECT * FROM todos WHERE id = ?';
             let [test, ...rest] = await pool.query(todoQuery, req.params.id)
             if(!test.length){
                 return res.status(404).json(
@@ -63,6 +65,7 @@ class TodoController {
                     }
                 )
             }
+            test[0].is_active = test[0].is_active == 1 ? true : false;
             res.json(
                 {
                     "status": "Success",
@@ -81,16 +84,16 @@ class TodoController {
         let { title, is_active } = req.body
         try {
             let query = `UPDATE todos SET title = ? WHERE id = ?`
-            if(title && !is_active){
+            if(title){
                 await pool.query(query, [title, id])
             }
-            if(!title && is_active){
-                let query = `UPDATE todos SET is_active = ? WHERE id = ?`
-                await pool.query(query, [is_active, id])
+            if(typeof is_active !== 'undefined'){
+                let query2 = `UPDATE todos SET is_active = ? WHERE id = ?`
+                await pool.query(query2, [is_active, id])
             }
             let getQuery = 'SELECT * FROM todos WHERE id = ?'
-            let data = await pool.query(getQuery, [id])
-            if(!data[0].length){
+            let [data, ...rest] = await pool.query(getQuery, [id])
+            if(!data.length){
                 return res.status(404).json(
                     {
                         "status": "Not Found",
@@ -99,10 +102,11 @@ class TodoController {
                     }
                 )
             }
+            data[0].is_active = data[0].is_active == 1 ? true : false;
             res.json({
                 "status": "Success",
                 "message": "Success",
-                "data": data[0][0]
+                "data": data[0]
             })
         } catch (error) {
             res.status(500).json(

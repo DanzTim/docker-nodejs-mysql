@@ -15,7 +15,7 @@ const activitySchema = {
         title: Joi.string().max(100).required().messages({
             'any.required': `title cannot be null`
         }),
-        priority: Joi.string().valid("very-high", "high", "normal", "low", "very-low"),
+        priority: Joi.string().optional().valid("very-high", "high", "normal", "low", "very-low").empty(['', null]).default('very-high'),
         activity_group_id: Joi.number().required().messages({
             'any.required': `activity_group_id cannot be null`
         }),
@@ -39,7 +39,7 @@ const activitySchema = {
     updateTodo: Joi.object({
         title: Joi.string(),
         is_active: Joi.bool(),
-        priority: Joi.string().valid("very-high", "high", "normal", "low", "very-low"),
+        priority: Joi.string().optional().valid("very-high", "high", "normal", "low", "very-low").empty(['', null]).default('very-high'),
         _comment: Joi.string()
     })
 }

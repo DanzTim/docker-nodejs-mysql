@@ -15,11 +15,11 @@ class ActivityController {
                     }
                 )
             }
-
+            
             res.json({
                 "status": "Success",
                 "message": "Success",
-                "data": test[0][0]
+                "data": test[0]
             })
         } catch (error) {
             console.error(error);
