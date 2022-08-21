@@ -15,7 +15,7 @@ router.delete('/activity-groups/:id', validateDeleteActivity, acti.deleteActivit
 
 router.post('/todo-items', makeTodo, todo.makeTodo);
 router.get('/todo-items', todo.listTodos);
-router.post('/todo-items:id', validateParam, todo.getTodoById);
+router.get('/todo-items/:id', validateParam, todo.getTodoById);
 router.patch('/todo-items/:id', validateUpdateTodo, todo.updateTodo);
 router.delete('/todo-items/:id', validateDeleteActivity, todo.deleteTodo);
 
