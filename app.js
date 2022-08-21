@@ -25,7 +25,7 @@ app.listen(PORT, '0.0.0.0', async () => {
     await pool.getConnection();
     // await pool.query(`CREATE DATABASE IF NOT EXISTS dandi_temmu`)
     // await pool.query(`USE dandi_temmu`)
-    await pool.query(`CREATE TABLE IF NOT EXISTS \`activity\` (
+    await pool.query(`CREATE TABLE IF NOT EXISTS \`activities\` (
       \`id\` int NOT NULL AUTO_INCREMENT,
       \`email\` varchar(100) DEFAULT NULL,
       \`title\` varchar(100) DEFAULT NULL,
@@ -34,7 +34,7 @@ app.listen(PORT, '0.0.0.0', async () => {
       PRIMARY KEY (\`id\`)
     ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;`)
     
-    await pool.query(`CREATE TABLE IF NOT EXISTS \`todo\` (
+    await pool.query(`CREATE TABLE IF NOT EXISTS \`todos\` (
       \`id\` int NOT NULL AUTO_INCREMENT,
       \`title\` varchar(100) DEFAULT NULL,
       \`is_active\` tinyint(1) DEFAULT '1',
