@@ -43,9 +43,7 @@ app.listen(PORT, '0.0.0.0', async () => {
       \`created_at\` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
       \`updated_at\` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
       \`deleted_at\` timestamp NULL DEFAULT NULL,
-      PRIMARY KEY (\`id\`),
-      KEY \`todo_FK\` (\`activity_group_id\`),
-      CONSTRAINT \`todo_FK\` FOREIGN KEY (\`activity_group_id\`) REFERENCES \`activity\` (\`id\`) ON DELETE CASCADE ON UPDATE CASCADE
+      PRIMARY KEY (\`id\`)
     ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;`)
     console.log('Server running on port %s', PORT);
 })
