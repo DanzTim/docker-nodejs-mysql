@@ -67,7 +67,7 @@ class TodoController {
                 {
                     "status": "Success",
                     "message": "Success",
-                    "data": test
+                    "data": test[0]
                 }
             )
         } catch (error) {
@@ -93,7 +93,7 @@ class TodoController {
             if(!data[0].length){
                 return res.status(404).json(
                     {
-                        "status": "NotFound",
+                        "status": "Not Found",
                         "message": `Todo with ID ${req.params.id} Not Found`,
                         "data": {}
                     }
@@ -126,7 +126,7 @@ class TodoController {
             if(!data[0].length){
                 return res.status(404).json(
                     {
-                        "status": "NotFound",
+                        "status": "Not Found",
                         "message": `Todo with ID ${req.params.id} Not Found`,
                         "data": {}
                     }

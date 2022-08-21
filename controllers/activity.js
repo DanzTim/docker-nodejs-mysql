@@ -3,8 +3,7 @@ const { pool } = require('../connection');
 class ActivityController {
     // app.get('/activity-groups/:id', validateParam, async (req, res) {
     async getActivityById (req, res) {
-        let query = 'SELECT id, title, created_at FROM activity WHERE id = ?';
-        let todoQuery = 'SELECT * FROM todo WHERE activity_group_id = ?';
+        let query = 'SELECT * FROM activities WHERE id = ?';
         try {
             let [test, ...rest] = await pool.query(query, req.params.id)
             if(!test.length){
@@ -16,11 +15,11 @@ class ActivityController {
                     }
                 )
             }
-            let [todos, ...rest2] = await pool.query(todoQuery, req.params.id)
-            let { id, title, created_at } = test[0]
 
             res.json({
-                id, title, created_at, "todo_items": todos
+                "status": "Success",
+                "message": "Success",
+                "data": test[0][0]
             })
         } catch (error) {
             console.error(error);
@@ -29,19 +28,14 @@ class ActivityController {
 
     // app.get('/activity-groups', async (req, res) {
     async listActivities (req, res) {
-        let total, limit, data;
-        let query = 'SELECT id, title, created_at FROM activity';
+        let query = 'SELECT id, title, created_at FROM activities';
         try {
             let [test, ...rest] = await pool.query(query)
-            data = test
-            total = test.length
-            limit = 1000
 
             res.json({
-                total, 
-                limit,
-                "skip": 0,
-                data
+                "status": "Success",
+                "message": "Success",
+                "data": test[0]
             })
         } catch (error) {
             console.error(error);
@@ -52,10 +46,10 @@ class ActivityController {
     async createActivity (req, res) {
         let { title, email } = req.body
         try {
-            let query = 'INSERT INTO activity (title, email) VALUES (?, ?)';
+            let query = 'INSERT INTO activities (title, email) VALUES (?, ?)';
             await pool.query(query, [title, email])
             let [insert, ...rest] = await pool.query(`SELECT LAST_INSERT_ID() as lastId;`)
-            let [data, ...rest2] = await pool.query(`SELECT * FROM activity WHERE id = ?`, [insert[0].lastId])
+            let [data, ...rest2] = await pool.query(`SELECT * FROM activities WHERE id = ?`, [insert[0].lastId])
             res.status(201).json({
                 "status": "Success",
                 "message": "Success",
@@ -75,16 +69,16 @@ class ActivityController {
     // app.delete('/activity-groups/:id', validateDeleteActivity, async (req, res) {
     async deleteActivity (req, res) {
         try {
-            let checkPath = 'SELECT * FROM activity WHERE id = ?';
+            let checkPath = 'SELECT * FROM activities WHERE id = ?';
             let check = await pool.query(checkPath, [req.params.id])
             if(check[0].length == 0){
                 return res.status(404).json({
                     "status": "Not Found",
-                    "message": "Activity with ID 1381738 Not Found",
+                    "message": `Activity with ID ${req.params.id} Not Found`,
                     "data": {}
                 })
             }
-            let queryPath = 'DELETE FROM activity WHERE id = ?';
+            let queryPath = 'DELETE FROM activities WHERE id = ?';
             await pool.query(queryPath, [req.params.id])
 
             res.status(200).json({
@@ -102,9 +96,9 @@ class ActivityController {
         let { id } = req.params
         let { title } = req.body
         try {
-            let query = `UPDATE activity SET title = ? WHERE id = ?`
+            let query = `UPDATE activities SET title = ? WHERE id = ?`
             await pool.query(query, [title, id])
-            let getQuery = 'SELECT * FROM activity WHERE id = ?'
+            let getQuery = 'SELECT * FROM activities WHERE id = ?'
             let data = await pool.query(getQuery, [id])
             if(!data[0].length){
                 return res.status(404).json(
@@ -116,7 +110,10 @@ class ActivityController {
                 )
             }
             res.json({
-                ...data[0][0]
+                "status": "Success",
+                "message": "Success",
+                "data": data[0][0]
+
             })
         } catch (error) {
             res.status(500).json(
