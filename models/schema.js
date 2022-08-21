@@ -5,14 +5,20 @@ const activitySchema = {
         email: Joi.string().email()
     }),
     payload: Joi.object({
-        title: Joi.string().max(100).required(),
+        title: Joi.string().max(100).required().messages({
+            'any.required': `title cannot be null`
+        }),
         email: Joi.string().email().required(),
         _comment: Joi.string()
     }),
     todo: Joi.object({
-        title: Joi.string().max(100).required(),
+        title: Joi.string().max(100).required().messages({
+            'any.required': `title cannot be null`
+        }),
         priority: Joi.string().valid("very-high", "high", "normal", "low", "very-low"),
-        activity_group_id: Joi.number(),
+        activity_group_id: Joi.number().required().messages({
+            'any.required': `activity_group_id cannot be null`
+        }),
         _comment: Joi.string()
     }),
     param: Joi.object({
