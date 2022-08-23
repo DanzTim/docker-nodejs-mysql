@@ -7,7 +7,7 @@ class ActivityController {
         try {
             let [test, ...rest] = await pool.query(query, req.params.id)
             if(!test.length){
-                return res.status(404).json(
+                return res.code(404).send(
                     {
                         "status": "Not Found",
                         "message": `Activity with ID ${req.params.id} Not Found`,
@@ -16,7 +16,7 @@ class ActivityController {
                 )
             }
             
-            res.json({
+            res.send({
                 "status": "Success",
                 "message": "Success",
                 "data": test[0]
@@ -32,10 +32,10 @@ class ActivityController {
         try {
             let [test, ...rest] = await pool.query(query)
 
-            res.json({
+            res.send({
                 "status": "Success",
                 "message": "Success",
-                "data": test[0]
+                "data": test
             })
         } catch (error) {
             console.error(error);
@@ -50,7 +50,7 @@ class ActivityController {
             await pool.query(query, [title, email])
             let [insert, ...rest] = await pool.query(`SELECT LAST_INSERT_ID() as lastId;`)
             let [data, ...rest2] = await pool.query(`SELECT * FROM activities WHERE id = ?`, [insert[0].lastId])
-            res.status(201).json({
+            res.code(201).send({
                 "status": "Success",
                 "message": "Success",
                 "data": {
@@ -72,7 +72,7 @@ class ActivityController {
             let checkPath = 'SELECT * FROM activities WHERE id = ?';
             let check = await pool.query(checkPath, [req.params.id])
             if(check[0].length == 0){
-                return res.status(404).json({
+                return res.code(404).send({
                     "status": "Not Found",
                     "message": `Activity with ID ${req.params.id} Not Found`,
                     "data": {}
@@ -81,7 +81,7 @@ class ActivityController {
             let queryPath = 'DELETE FROM activities WHERE id = ?';
             await pool.query(queryPath, [req.params.id])
 
-            res.status(200).json({
+            res.code(200).send({
                 "status": "Success",
                 "message": "Success",
                 "data": {}
@@ -101,7 +101,7 @@ class ActivityController {
             let getQuery = 'SELECT * FROM activities WHERE id = ?'
             let data = await pool.query(getQuery, [id])
             if(!data[0].length){
-                return res.status(404).json(
+                return res.code(404).send(
                     {
                         "status": "Not Found",
                         "message": `Activity with ID ${id} Not Found`,
@@ -109,14 +109,14 @@ class ActivityController {
                     }
                 )
             }
-            res.json({
+            res.send({
                 "status": "Success",
                 "message": "Success",
                 "data": data[0][0]
 
             })
         } catch (error) {
-            res.status(500).json(
+            res.code(500).send(
                 {
                     "name": "GeneralError",
                     "message": error.message || error,

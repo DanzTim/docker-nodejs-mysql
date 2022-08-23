@@ -6,7 +6,7 @@ module.exports = {
             await activitySchema.query.validateAsync(req.query);
             next()
         } catch (error) {
-            return res.status(400).json({
+            return res.code(400).send({
                 "status": "Bad Request",
                 "message": error.details[0].message,
                 "data": {}
@@ -18,7 +18,7 @@ module.exports = {
             await activitySchema.payload.validateAsync(req.body);
             next()
         } catch (error) {
-            return res.status(400).json({
+            return res.code(400).send({
                 "status": "Bad Request",
                 "message": error.details[0].message,
                 "data": {}
@@ -30,7 +30,7 @@ module.exports = {
             await activitySchema.param.validateAsync(req.params);
             next()
         } catch (error) {
-            return res.status(400).json({
+            return res.code(400).send({
                 "status": "Bad Request",
                 "message": error.details[0].message,
                 "data": {}
@@ -43,7 +43,7 @@ module.exports = {
             await activitySchema.queryId.validateAsync(req.query);
             next()
         } catch (error) {
-            return res.status(400).json({
+            return res.code(400).send({
                 "status": "Bad Request",
                 "message": error.details[0].message,
                 "data": {}
@@ -56,7 +56,7 @@ module.exports = {
             await activitySchema.title.validateAsync(req.body);
             next()
         } catch (error) {
-            return res.status(400).json({
+            return res.code(400).send({
                 "status": "Bad Request",
                 "message": error.details[0].message,
                 "data": {}
@@ -70,7 +70,7 @@ module.exports = {
             req.body = tester
             next()
         } catch (error) {
-            return res.status(400).json({
+            return res.code(400).send({
                 "status": "Bad Request",
                 "message": error.details[0].message,
                 "data": {}
@@ -83,7 +83,7 @@ module.exports = {
             req.body = tester
             next()
         } catch (error) {
-            return res.status(400).json({
+            return res.code(400).send({
                 "status": "Bad Request",
                 "message": error.details[0].message,
                 "data": {}

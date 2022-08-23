@@ -11,7 +11,7 @@ class TodoController {
             let [data, ...rest2] = await pool.query(`SELECT * FROM todos WHERE id = ?`, [insert[0].lastId])
 
             data[0].is_active = data[0].is_active == 1 ? true : false;
-            res.status(201).json(
+            res.code(201).send(
                 {
                     "status": "Success",
                     "message": "Success",
@@ -19,7 +19,7 @@ class TodoController {
                 }
             )
         } catch (error) {
-            res.status(500).json(
+            res.code(500).send(
                 {
                     "name": "GeneralError",
                     "message": error.message || error,
@@ -41,7 +41,7 @@ class TodoController {
             }
             let [test, ...rest] = await pool.query(todoQuery, [req.query.activity_group_id])
     
-            res.json({
+            res.send({
                 "status": "Success",
                 "message": "Success",
                 "data": test
@@ -57,7 +57,7 @@ class TodoController {
             let todoQuery = 'SELECT * FROM todos WHERE id = ?';
             let [test, ...rest] = await pool.query(todoQuery, req.params.id)
             if(!test.length){
-                return res.status(404).json(
+                return res.code(404).send(
                     {
                         "status": "Not Found",
                         "message": `Todo with ID ${req.params.id} Not Found`,
@@ -66,7 +66,7 @@ class TodoController {
                 )
             }
             test[0].is_active = test[0].is_active == 1 ? true : false;
-            res.json(
+            res.send(
                 {
                     "status": "Success",
                     "message": "Success",
@@ -94,7 +94,7 @@ class TodoController {
             let getQuery = 'SELECT * FROM todos WHERE id = ?'
             let [data, ...rest] = await pool.query(getQuery, [id])
             if(!data.length){
-                return res.status(404).json(
+                return res.code(404).send(
                     {
                         "status": "Not Found",
                         "message": `Todo with ID ${req.params.id} Not Found`,
@@ -103,13 +103,13 @@ class TodoController {
                 )
             }
             data[0].is_active = data[0].is_active == 1 ? true : false;
-            res.json({
+            res.send({
                 "status": "Success",
                 "message": "Success",
                 "data": data[0]
             })
         } catch (error) {
-            res.status(500).json(
+            res.code(500).send(
                 {
                     "name": "GeneralError",
                     "message": error.message || error,
@@ -128,7 +128,7 @@ class TodoController {
             let getQuery = 'SELECT * FROM todos WHERE id = ?'
             let data = await pool.query(getQuery, [req.params.id])
             if(!data[0].length){
-                return res.status(404).json(
+                return res.code(404).send(
                     {
                         "status": "Not Found",
                         "message": `Todo with ID ${req.params.id} Not Found`,
@@ -139,7 +139,7 @@ class TodoController {
             let queryPath = 'DELETE FROM todos WHERE id = ?';
             await pool.query(queryPath, [req.params.id])
     
-            res.status(200).json(
+            res.code(200).send(
                 {
                     "status": "Success",
                     "message": "Success",
