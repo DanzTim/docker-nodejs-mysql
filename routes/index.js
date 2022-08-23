@@ -6,7 +6,7 @@ const acti = new ActivityController
 const todo = new TodoController
 
 async function router(app){
-    app.get('/activity-groups/', acti.listActivities);
+    app.get('/activity-groups', acti.listActivities);
     app.get('/activity-groups/:id', { preHandler: validateParam}, acti.getActivityById);
     app.post('/activity-groups', { preHandler: validatePostActivity }, acti.createActivity);
     app.patch('/activity-groups/:id', { preHandler: validateUpdate }, acti.updateActivity);

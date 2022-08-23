@@ -1,18 +1,22 @@
 {
-  "name": "hapi",
+  "name": "devcode-app",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=production node app.js"
+    "start": "NODE_ENV=production node fastify.js"
   },
-  "keywords": [],
+  "keywords": [
+    "docker",
+    "mysql",
+    "node",
+    "express"
+  ],
   "author": "@danztim",
   "license": "ISC",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "dotenv": "^16.0.1",
-    "express": "^4.18.1",
     "fastify": "^4.5.2",
     "mysql2": "^2.3.3"
   }
