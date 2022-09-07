@@ -1,120 +1,168 @@
 const { pool } = require('../connection');
 
 class ActivityController {
-	// app.get('/activity-groups/:id', validateParam, async (req, res) {
-	async getActivityById(req, res) {
-		let query = 'SELECT * FROM activities WHERE id = ?';
+	constructor() {
+		this.activitiesList = [];
+		this.activityId = 1;
+	}
+
+	// app.get('/activity-groups/:id', validateParam, async = async (req, res) => {
+	getActivityById = async (req, res) => {
 		try {
-			let [test, ...rest] = await pool.query(query, req.params.id);
-			if (!test.length) {
+			let result = this.activitiesList.filter(
+				(item) => item.id == req.params.id
+			);
+			if (!result) {
+				let query = 'SELECT * FROM activities WHERE id = ?';
+				let [test, ...rest] = await pool.query(query, req.params.id);
+				result = test;
+			}
+			if (!result.length) {
 				return res.status(404).json({
 					status: 'Not Found',
 					message: `Activity with ID ${req.params.id} Not Found`,
 					data: {},
 				});
 			}
-
 			res.json({
 				status: 'Success',
 				message: 'Success',
-				data: test[0],
+				data: result[0],
 			});
 		} catch (error) {
 			console.error(error);
 		}
-	}
+	};
 
-	// app.get('/activity-groups', async (req, res) {
-	async listActivities(req, res) {
+	// app.get('/activity-groups', async = async (req, res) => {
+	listActivities = async (req, res) => {
 		let query = 'SELECT id, title, created_at FROM activities';
 		try {
-			let [test, ...rest] = await pool.query(query);
+			let result = this.activitiesList;
+
+			if (!result.length) {
+				let [test, ...rest] = await pool.query(query);
+				result = test;
+				this.activitiesList = test;
+				const maxId = Math.max(...test.map((user) => user.id));
+				if (!maxId) {
+					maxId = 0;
+				}
+				this.activityId = maxId + 1;
+			}
 
 			res.json({
 				status: 'Success',
 				message: 'Success',
-				data: test,
+				data: result,
 			});
 		} catch (error) {
 			console.error(error);
 		}
-	}
+	};
 
-	// app.post('/activity-groups', validatePostActivity, async (req, res) {
-	async createActivity(req, res) {
+	// app.post('/activity-groups', validatePostActivity, async = async (req, res) => {
+	createActivity = async (req, res) => {
 		let { title, email } = req.body;
 		try {
+			if (this.activityId == 1) {
+				let [test, ...rest] = await pool.query(
+					'SELECT id, title, created_at FROM activities'
+				);
+				const maxId = Math.max(...test.map((user) => user.id));
+				if (!maxId) {
+					maxId = 0;
+				}
+				this.activityId = maxId + 1;
+			}
+			let newAct = {
+				id: this.activityId,
+				title: title,
+				email: email,
+				created_at: new Date().toISOString(),
+				updated_at: new Date().toISOString(),
+			};
+			this.activitiesList.push(newAct);
 			let query = 'INSERT INTO activities (title, email) VALUES (?, ?)';
-			await pool.query(query, [title, email]);
-			let [insert, ...rest] = await pool.query(
-				`SELECT LAST_INSERT_ID() as lastId;`
-			);
-			let [data, ...rest2] = await pool.query(
-				`SELECT * FROM activities WHERE id = ?`,
-				[insert[0].lastId]
-			);
 			res.status(201).json({
 				status: 'Success',
 				message: 'Success',
-				data: {
-					created_at: data[0].created_at,
-					updated_at: data[0].updated_at,
-					id: insert[0].lastId,
-					title: data[0].title,
-					email: data[0].email,
-				},
+				data: newAct,
 			});
+			await pool.query(query, [title, email]);
+			this.activityId++;
 		} catch (error) {
 			console.error(error);
 		}
-	}
+	};
 
-	// app.delete('/activity-groups/:id', validateDeleteActivity, async (req, res) {
-	async deleteActivity(req, res) {
+	// app.delete('/activity-groups/:id', validateDeleteActivity, async = async (req, res) => {
+	deleteActivity = async (req, res) => {
 		try {
-			let checkPath = 'SELECT * FROM activities WHERE id = ?';
-			let check = await pool.query(checkPath, [req.params.id]);
-			if (check[0].length == 0) {
+			var index = this.activitiesList.findIndex(
+				(item) => item.id == req.params.id
+			);
+			if (index != -1) {
+				// only splice array when item is found
+				this.activitiesList.splice(index, 1);
+			} else {
 				return res.status(404).json({
 					status: 'Not Found',
 					message: `Activity with ID ${req.params.id} Not Found`,
 					data: {},
 				});
 			}
-			let queryPath = 'DELETE FROM activities WHERE id = ?';
-			await pool.query(queryPath, [req.params.id]);
-
 			res.status(200).json({
 				status: 'Success',
 				message: 'Success',
 				data: {},
 			});
+			let queryPath = 'DELETE FROM activities WHERE id = ?';
+			await pool.query(queryPath, [req.params.id]);
 		} catch (error) {
 			console.error(error);
 		}
-	}
+	};
 
-	// app.patch('/activity-groups/:id', validateUpdate, async (req, res) {
-	async updateActivity(req, res) {
+	// app.patch('/activity-groups/:id', validateUpdate, async = async (req, res) => {
+	updateActivity = async (req, res) => {
 		let { id } = req.params;
 		let { title } = req.body;
 		try {
-			let query = `UPDATE activities SET title = ? WHERE id = ?`;
-			await pool.query(query, [title, id]);
-			let getQuery = 'SELECT * FROM activities WHERE id = ?';
-			let data = await pool.query(getQuery, [id]);
-			if (!data[0].length) {
-				return res.status(404).json({
-					status: 'Not Found',
-					message: `Activity with ID ${id} Not Found`,
-					data: {},
+			var index = this.activitiesList.findIndex((item) => item.id == id);
+			if (index > -1) {
+				let oldAct = this.activitiesList[index];
+				oldAct.title = title;
+				res.json({
+					status: 'Success',
+					message: 'Success',
+					data: oldAct,
 				});
+				this.activitiesList[index].title = title;
+				await pool.query(
+					`UPDATE activities SET title = '${title}' WHERE id = ${id}`
+				);
+			} else {
+				let getQuery = 'SELECT * FROM activities';
+				let [data, ...rest] = await pool.query(getQuery);
+				this.activitiesList = data;
+				let result = this.activitiesList.find((item) => item.id == id);
+
+				if (!result) {
+					return res.status(404).json({
+						status: 'Not Found',
+						message: `Activity with ID ${id} Not Found`,
+						data: {},
+					});
+				} else {
+					result.title = title;
+					return res.json({
+						status: 'Success',
+						message: 'Success',
+						data: result,
+					});
+				}
 			}
-			res.json({
-				status: 'Success',
-				message: 'Success',
-				data: data[0][0],
-			});
 		} catch (error) {
 			res.status(500).json({
 				name: 'GeneralError',
@@ -125,7 +173,7 @@ class ActivityController {
 				errors: {},
 			});
 		}
-	}
+	};
 }
 
 module.exports = { ActivityController };

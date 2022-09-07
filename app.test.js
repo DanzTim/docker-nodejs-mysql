@@ -59,14 +59,15 @@ describe('Get List Todo', () => {
 		expect(response.statusCode).toEqual(200);
 		expect(response.body.message).toEqual('Success');
 		expect(response.body.data).toEqual(
-			expect.objectContaining({
-				id: 15,
-				title: 'test 5.1-2',
-			})
+			expect.arrayContaining([
+				expect.objectContaining({
+					id: 15,
+				}),
+			])
 		);
 	});
 	test('get list todo with query param success', async () => {
-		const response = await request(app).get('/todo-items/activity_group_id=5');
+		const response = await request(app).get('/todo-items?activity_group_id=5');
 		expect(response.statusCode).toEqual(200);
 		expect(response.body.data).toEqual(
 			expect.arrayContaining([
@@ -77,7 +78,7 @@ describe('Get List Todo', () => {
 		);
 	});
 	test('get list todo with query param fail', async () => {
-		const response = await request(app).get('/todo-items/activity_group_id=99');
+		const response = await request(app).get('/todo-items?activity_group_id=99');
 		expect(response.statusCode).toEqual(200);
 		expect(response.body.data).toEqual([]);
 	});
