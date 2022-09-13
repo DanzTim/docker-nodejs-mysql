@@ -139,9 +139,6 @@ class ActivityController {
 					data: oldAct,
 				});
 				this.activitiesList[index].title = title;
-				await pool.query(
-					`UPDATE activities SET title = '${title}' WHERE id = ${id}`
-				);
 			} else {
 				let getQuery = 'SELECT * FROM activities';
 				let [data, ...rest] = await pool.query(getQuery);
@@ -149,20 +146,24 @@ class ActivityController {
 				let result = this.activitiesList.find((item) => item.id == id);
 
 				if (!result) {
-					return res.status(404).json({
+				    res.status(404).json({
 						status: 'Not Found',
 						message: `Activity with ID ${id} Not Found`,
 						data: {},
 					});
 				} else {
 					result.title = title;
-					return res.json({
+					res.json({
 						status: 'Success',
 						message: 'Success',
 						data: result,
 					});
 				}
 			}
+            let query = `UPDATE activities SET title = '${title}' WHERE id = ${id}`
+            await pool.query(query);
+            console.log(query);
+            console.log(this.activitiesList);
 		} catch (error) {
 			res.status(500).json({
 				name: 'GeneralError',
