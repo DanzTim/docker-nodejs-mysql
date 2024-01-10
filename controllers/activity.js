@@ -160,10 +160,8 @@ class ActivityController {
 					});
 				}
 			}
-            let query = `UPDATE activities SET title = '${title}' WHERE id = ${id}`
-            await pool.query(query);
-            console.log(query);
-            console.log(this.activitiesList);
+			let query = `UPDATE activities SET title = '${title}' WHERE id = ${id}`
+			await pool.query(query);
 		} catch (error) {
 			res.status(500).json({
 				name: 'GeneralError',
